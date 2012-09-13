@@ -23,6 +23,8 @@ app.get('/hello/:name', function(req, res) {
   return res.send("Hello " + req.params.name);
 });
 
+(require('./more_examples'))(app);
+
 port = process.env.PORT || process.env.VMC_APP_PORT || 3000;
 
 app.listen(port, function() {

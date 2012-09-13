@@ -20,6 +20,7 @@ app.get '/hello', (req, res) ->
 app.get '/hello/:name', (req, res) -> 
     res.send "Hello #{req.params.name}"
 
+(require './more_examples') app
 
 #  resp.render 'index'
 # Define Port
