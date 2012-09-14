@@ -1,5 +1,5 @@
 module.exports = (app) ->
-    { all_help_requests } = require './persist'
+    all_help_requests = (callback) -> null, []
     app.get '/', (req, res) ->
         all_help_requests (err, help_requests) ->
             if err?

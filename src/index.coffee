@@ -1,6 +1,7 @@
 express = require 'express'
 assets = require 'connect-assets'
 _ = require 'underscore'
+url = require 'url'
 
 app = express()
 
@@ -23,10 +24,6 @@ app.get '/hello', (req, res) ->
 app.get '/hello/:name', (req, res) -> 
     res.send "Hello #{req.params.name}"
 
-(require './more_examples') app
-(require './prettify') app
-(require './actions') app
-
 # Start Server
-port = process.env.PORT or process.env.VMC_APP_PORT or 3000
+port = process.env.PORT ? process.env.VMC_APP_PORT ? 3000
 app.listen port, -> console.log "Listening on #{port}\nPress CTRL-C to stop server."

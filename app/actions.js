@@ -2,7 +2,7 @@
 
 module.exports = function(app) {
   var store_help_request;
-  store_help_request = require('./persist').store_help_request;
+  store_help_request = function() {};
   return app.post('/request_help', function(req, res) {
     var location, request, team, technology, whats_up, _ref;
     request = (_ref = req.body, team = _ref.team, location = _ref.location, technology = _ref.technology, whats_up = _ref.whats_up, _ref);
