@@ -13,20 +13,41 @@ testCmd = pkg.scripts.test
 startCmd = pkg.scripts.start
   
 
+spawned_processes = []
+cleanup = (e) ->
+    console.log e.message if e?.message?
+    while spawned_processes.length > 0
+      {spawned, command} = spawned_processes.shift()
+      spawned.kill()
+      console.log "Killed #{command}"
+
+process.on 'SIGINT', cleanup
+process.on 'exit', cleanup
+process.on 'uncaughtException', cleanup
+
 log = (message, color, explanation) ->
   console.log color + message + reset + ' ' + (explanation or '')
 
+spawn_with_stdout = (command, args, callback) ->
+  spawned = spawn command, args
+  spawned.stdout.pipe process.stdout
+  spawned.stderr.pipe process.stderr
+  if callback?
+    spawned.on 'exit', callback
+
+  spawned_processes.push {command, spawned}
+  spawned
+
+
+
 # Compiles app.coffee and src directory to the app directory
 build = (callback) ->
-  coffee = spawn 'coffee', ['-c','-b', '-o', 'app', 'src']
-  coffee.stdout.pipe process.stdout
-  coffee.stderr.pipe process.stderr
-  coffee.on 'exit', (status) -> callback?() if status is 0
+  spawn_with_stdout 'coffee', ['-c','-b', '-o', 'app', 'src'], callback
 
 # mocha test
 test = (callback) ->
   try
-    spec = spawn 'mocha', [
+    spawn_with_stdout 'mocha', [
       '--compilers'
       'coffee:coffee-script'
       '--colors'
@@ -34,34 +55,42 @@ test = (callback) ->
       'should'
       '--require'
       './server'
-    ]
-    spec.stdout.pipe process.stdout 
-    spec.stderr.pipe process.stderr
-    spec.on 'exit', (status) -> callback?() if status is 0
+    ], callback
   catch err
     log err.message, red
     log 'Mocha is not installed - try npm install mocha -g', red
 
-task 'build', ->
-  build -> log ":)", green
+build_redis = (callback) ->
+  spawn_with_stdout 'make', ['-C', 'redis'], callback
 
-task 'spec', 'Run Mocha tests', ->
-  build -> test -> log ":)", green
+run_redis = (callback) ->
+  build_redis (err) ->
+    if not err
+      spawn_with_stdout './redis/src/redis-server', ['--port', 6300], callback
+
+task 'build', ->
+  build -> log "Built!", green
 
 task 'test', 'Run Mocha tests', ->
-  build -> test -> log ":)", green
+  build -> test -> log "Tests Complete!", green
 
-task 'go', 'start dev env', ->
+task 'make-redis', 'Build the redis install', ->
+  build_redis -> log "Built redis!", green
+
+task 'redis', 'Run the redis server', ->
+  run_redis -> log "Redis has finished", green
+
+task 'go', 'Start dev server/compilation', ->
   # watch_coffee
-  coffee = spawn 'coffee' , ['-c', '-b', '-w', '-o', 'app', 'src']
-  coffee.stdout.pipe process.stdout
-  coffee.stderr.pipe process.stderr
+  coffee = spawn_with_stdout 'coffee' , ['-c', '-b', '-w', '-o', 'app', 'src']
   log 'Watching coffee files', green
 
+  do run_redis
+  log "Redis is running", green
+
   # watch_js
-  supervisor = spawn 'node', ['./node_modules/supervisor/lib/cli-wrapper.js','-w','app,views', '-e', 'js|jade', 'server']
-  supervisor.stdout.pipe process.stdout
-  supervisor.stderr.pipe process.stderr
+  spawn_with_stdout 'node', ['./node_modules/supervisor/lib/cli-wrapper.js','-w','app,views', '-e', 'js|jade', 'server']
+
   log 'Watching js files and running server', green
 
   

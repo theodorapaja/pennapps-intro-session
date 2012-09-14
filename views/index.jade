@@ -41,7 +41,7 @@ block content
         button(type="submit")
           | Submit!
 
-    .span8.offset1
+    .span6.offset1
       table.table.table-striped.help-requests
         thead
           tr
@@ -50,4 +50,7 @@ block content
             th.technology Technologies
             th.whats-up Description
         tbody.requests
+          - each request in help_requests
+            include help_request
+
 
