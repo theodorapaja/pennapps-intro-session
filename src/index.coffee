@@ -7,6 +7,9 @@ app = express()
 # Add Connect Assets
 app.use assets()
 
+# Parse post requests
+app.use express.bodyParser()
+
 # Set the public folder as static assets
 app.use express.static(process.cwd() + '/public')
 
@@ -21,9 +24,8 @@ app.get '/hello/:name', (req, res) ->
     res.send "Hello #{req.params.name}"
 
 (require './more_examples') app
-
-#  resp.render 'index'
-# Define Port
+(require './prettify') app
+(require './actions') app
 
 # Start Server
 port = process.env.PORT or process.env.VMC_APP_PORT or 3000

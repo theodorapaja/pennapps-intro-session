@@ -11,6 +11,8 @@ app = express();
 
 app.use(assets());
 
+app.use(express.bodyParser());
+
 app.use(express["static"](process.cwd() + '/public'));
 
 app.set('view engine', 'jade');
@@ -24,6 +26,10 @@ app.get('/hello/:name', function(req, res) {
 });
 
 (require('./more_examples'))(app);
+
+(require('./prettify'))(app);
+
+(require('./actions'))(app);
 
 port = process.env.PORT || process.env.VMC_APP_PORT || 3000;
 

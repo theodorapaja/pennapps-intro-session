@@ -1,13 +1,53 @@
 extends layout
 block content
-  .row
-    .span4
-      markdown:
-        # This is my markdown
-    .span8
-      div
-        | this is content
-        .span4
-          | More Things
-        .span4
-          | here!
+  .alert.alert-error
+    a.close(data-dismiss="alert") Okay
+    .h3 Something Went Wrong
+    p
+      | Try asking for help at 
+      a(href='#') pennapps.lore.com
+  .container.page-wrap
+    .row
+      .span10.offset2.page-title
+        h1
+          | Help Me!
+    form.form-horizontal.request-help
+      // See http://twitter.github.com/bootstrap/base-css.html#forms
+      .control-group
+        label(for="team").control-label
+          | Team
+        .controls
+          input(type="text", placeholder="Team Name")#team.span5
+
+      .control-group
+        label(for="location").control-label
+          | Location
+        .controls
+          input(type="text", placeholder="Where are you?")#location.span5
+
+      .control-group
+        label(for="technology").control-label
+          | Technologies
+        .controls
+          input(type="text", placeholder="e.g. Redis, Node, CoffeeScript")#technology.span5
+
+      .control-group
+        label(for="whats-up").control-label
+          | What's Up?
+        .controls
+          textarea(placeholder="A brief description.")#whats-up.span5
+
+      .control-group.offset6
+        button(type="submit")
+          | Submit!
+
+    .span8.offset1
+      table.table.table-striped.help-requests
+        thead
+          tr
+            th.team Team
+            th.location Location
+            th.technology Technologies
+            th.whats-up Description
+        tbody.requests
+

@@ -1,0 +1,17 @@
+textarea {
+    resize: none;
+}
+
+.page-wrap {
+    padding-top: 40px;
+
+}
+
+.page-title {
+    padding-bottom: 20px;
+    padding-left: 20px;
+}
+
+.alert {
+    display: none;
+}
