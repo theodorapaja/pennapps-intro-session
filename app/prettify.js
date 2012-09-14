@@ -3,7 +3,7 @@
 module.exports = function(app) {
   var all_help_requests;
   all_help_requests = require('./persist').all_help_requests;
-  return app.get('/help_me', function(req, res) {
+  return app.get('/', function(req, res) {
     return all_help_requests(function(err, help_requests) {
       if (err != null) {
         return res.send(500, err);

@@ -1,6 +1,6 @@
 module.exports = (app) ->
     { all_help_requests } = require './persist'
-    app.get '/help_me', (req, res) ->
+    app.get '/', (req, res) ->
         all_help_requests (err, help_requests) ->
             if err?
                 res.send 500, err
